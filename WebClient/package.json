@@ -1,0 +1,51 @@
+{
+  "name": "breakfast-quest",
+  "version": "0.1.0",
+  "description": "Web front-end for the Breakfast Quest game",
+  "main": "app.js",
+  "scripts": {
+    "build": "gulp build",
+    "clean": "gulp clean",
+    "start": "node ./dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjrousos/BreakfastQuest.git"
+  },
+  "author": "M.J. Rousos",
+  "bugs": {
+    "url": "https://github.com/mjrousos/BreakfastQuest/issues"
+  },
+  "homepage": "https://github.com/mjrousos/BreakfastQuest#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.0",
+    "eslint-plugin-react": "^6.10.3",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-clean-css": "^3.0.4",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^3.0.1",
+    "gulp-imagemin": "^3.2.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1",
+    "style-loader": "^0.16.1",
+    "webpack": "^2.4.1"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "express": "^4.15.2",
+    "morgan": "^1.8.1",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "toastr": "^2.1.2"
+  }
+}
