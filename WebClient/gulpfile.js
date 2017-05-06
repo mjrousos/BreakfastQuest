@@ -22,18 +22,27 @@ var config = {
       'node_modules/bootstrap/dist/css/bootstrap.min.css',
       'node_modules/bootstrap/dist/css/bootstrap-theme.min.css',
       'node_modules/toastr/package/toastr.css'
+    ],
+    fonts: [
+      'node_modules/bootstrap/dist/fonts/*.*'
     ]
   }
 };
-config.paths.clientDist = config.paths.dist + "/public";
+
+// Input path configuration
 config.paths.html = config.paths.clientSrc + '/**/*.html';
 config.paths.css.push(config.paths.clientSrc + '/**/*.css');
 config.paths.images = config.paths.clientSrc + '/images/**/*';
-config.paths.imagesOut = config.paths.clientDist + '/img';
 config.paths.clientJs = config.paths.clientSrc + '/**/*.js';
 config.paths.serverJs = config.paths.serverSrc + '/**/*.js';
 config.paths.serverConfig = config.paths.serverSrc + '/**/*.json';
 config.paths.js = [config.paths.clientJs, config.paths.serverJs];
+
+// Output path configuration
+config.paths.clientDist = config.paths.dist + "/public";
+config.paths.imagesOut = config.paths.clientDist + '/img';
+config.paths.cssOut = config.paths.clientDist + '/css';
+config.paths.fontsOut = config.paths.clientDist + '/fonts';
 
 // Delete /dist
 gulp.task('clean', function (cb) {
@@ -41,14 +50,20 @@ gulp.task('clean', function (cb) {
   rimraf(config.paths.dist, cb);
 });
 
-// Minify and concat CSS into /dist/public/bundle.css
+// Minify and concat CSS into /dist/public/css/bundle.css
 gulp.task('build-css', ['clean'], function () {
   gulp.src(config.paths.css)
     .pipe(sourcemaps.init())
     .pipe(cleanCSS({ compatibility: 'ie8' }))
     .pipe(concat('bundle.css'))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(config.paths.clientDist));
+    .pipe(gulp.dest(config.paths.cssOut));
+});
+
+// Copy fonts into /dist/public/fonts
+gulp.task('build-fonts', ['clean'], function () {
+  gulp.src(config.paths.fonts)
+    .pipe(gulp.dest(config.paths.fontsOut));
 });
 
 // Minify images into /dist/public/img
@@ -120,11 +135,14 @@ gulp.task('watch', function () {
   gulp.watch(config.paths.serverConfig, ['build']);
 });
 
-gulp.task('build', ['build-images',
+gulp.task('build', [
+  'build-images',
+  'build-fonts',
   'build-css',
   'build-html',
   'build-client-js',
   'build-server-js',
-  'build-server-config']);
+  'build-server-config'
+  ]);
 
 gulp.task('default', ['build', 'lint', 'watch']);
