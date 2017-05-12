@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from './common/header';
 import GameBoard from './gameBoard/gameBoardPage';
+import Footer from './common/footer';
 
 class App extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class App extends React.Component {
       <div className="container">
         <Header />
         <GameBoard />
+        <Footer />
       </div>
     );
   }

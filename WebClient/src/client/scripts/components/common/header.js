@@ -20,7 +20,7 @@ class Header extends React.Component {
           </ul>
         </div>
       </nav>*/
-      <div className="jumbotron">
+      <div className="jumbotron" style={{paddingBottom: '28px', paddingTop: '16px'}}>
         <h1>Breakfast Quest</h1>
         <p>Can you help a hungry animal find its way to breakfast?</p>
       </div>

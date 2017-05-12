@@ -26,9 +26,15 @@ class GameBoardPage extends Component {
     this.setState({ gameState: GameStateStore.getGameState() });
   }
 
+  getStyle() {
+    return {
+      height: this.state.tileSize * (this.state.gameState.board.count())
+    };
+  }
+
   render() {
     return (
-      <div className='row'>
+      <div className='row' style={this.getStyle()}>
         <div className='col-xs-3'>
           <InstructionPanel />
         </div>
