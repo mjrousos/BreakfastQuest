@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Stamp Version') {
             steps {
-                echo 'Getting version...'
+                sh '$WORKSPACE/composeVersion.sh'
             }
         }
         stage('Build') {

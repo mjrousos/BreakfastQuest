@@ -17,6 +17,7 @@ var config = {
   paths: {
     clientSrc: './src/client',
     serverSrc: './src/server',
+    versionConfig: './generated/version.json',
     dist: './dist',
     css: [
       'node_modules/bootstrap/dist/css/bootstrap.min.css',
@@ -104,6 +105,12 @@ gulp.task('build-server-config', ['clean'], function () {
     .pipe(gulp.dest(config.paths.dist));
 });
 
+// Copy version config files to /public
+gulp.task('build-version-config', ['clean'], function () {
+  gulp.src(config.paths.versionConfig)
+    .pipe(gulp.dest(config.paths.clientDist));
+});
+
 // Transpile server JS files and concat into /dist/app.js
 gulp.task('build-server-js', ['clean'], function () {
   return gulp.src(config.paths.serverJs)
@@ -142,7 +149,8 @@ gulp.task('build', [
   'build-html',
   'build-client-js',
   'build-server-js',
-  'build-server-config'
+  'build-server-config',
+  'build-version-config'
   ]);
 
 gulp.task('default', ['build', 'lint', 'watch']);
