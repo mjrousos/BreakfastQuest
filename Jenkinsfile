@@ -20,6 +20,11 @@ pipeline {
                 echo 'Building...'
             }
         }
+        stage('Test') {
+            steps {
+                echo 'No tests yet'
+            }
+        }
         stage('Publish Images') {
             steps {
                 echo 'Pushing to ACR...'
