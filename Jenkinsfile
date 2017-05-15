@@ -12,12 +12,13 @@ pipeline {
     stages {
         stage('Stamp Version') {
             steps {
+                sh 'sudo chmod 777 $WORKSPACE/composeVersion.sh'
                 sh '$WORKSPACE/composeVersion.sh'
             }
         }
         stage('Build') {
             steps {
-                echo 'Building...'
+                sh 'cd $WORKSPACE/WebClient && npm install && npm run build'
             }
         }
         stage('Test') {
