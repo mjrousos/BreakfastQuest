@@ -13,5 +13,5 @@ rm -rf $targetDir
 rm -rf $webClientTargetDir
 mkdir $targetDir
 mkdir $webClientTargetDir
-echo Version=$version > $targetDir/version.properties
+echo $version > $targetDir/version.txt
 echo {\"Version\": \"$version\"} > $webClientTargetDir/version.json

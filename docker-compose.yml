@@ -3,21 +3,15 @@ version: '2'
 services:
 
   webclient:
-    image: mjrousos/breakfastquest-webclient
+    image: "mjrousos/breakfastquest-webclient:${BQ_TAG}"
     environment:
       - Dummy=NoEnvVarsNeeded
-    build:
-      context: ./WebClient
-      dockerfile: Dockerfile
     ports:
       - "5000"
 
   gateway:
-    image: mjrousos/breakfastquest-gateway
-    build:
-      context: ./BreakfastQuestGateway
-      dockerfile: dockerfile
+    image: "mjrousos/breakfastquest-gateway:${BQ_TAG}"
     depends_on:
       - webclient
     ports:
-      - "80:80"
+      - "${BQ_INGRESS_PORT}:80"

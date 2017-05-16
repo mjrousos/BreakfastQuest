@@ -2,38 +2,47 @@ pipeline {
     agent any
 
     triggers {
-        pollSCM 'H/2 * * * *'
+        pollSCM "H/2 * * * *"
     }
 
     tools {
-        nodejs 'NodeJS-7.10'
+        nodejs "NodeJS-7.10"
     }
 
     stages {
-        stage('Stamp Version') {
+        stage("Stamp Version") {
             steps {
-                sh 'sudo chmod 777 $WORKSPACE/composeVersion.sh'
-                sh '$WORKSPACE/composeVersion.sh'
+                sh "sudo chmod 777 $WORKSPACE/composeVersion.sh"
+                sh "$WORKSPACE/composeVersion.sh"
             }
         }
-        stage('Build') {
+        stage("Build") {
             steps {
-                sh 'cd $WORKSPACE/WebClient && npm install && npm run build'
+                sh "cd $WORKSPACE/WebClient && npm install && npm run build"
             }
         }
-        stage('Test') {
+        stage("Build Docker Images") {
+            environment {
+                BQ_TAG = readFile("$WORKSPACE/generated/version.txt").trim()
+                BQ_INGRESS_PORT = "8080"
+            }
             steps {
-                echo 'No tests yet'
+                sh "docker-compose -f docker-compose.yml -f docker-compose.build.yml build"
             }
         }
-        stage('Publish Images') {
+        stage("Test") {
             steps {
-                echo 'Pushing to ACR...'
+                echo "No tests yet"
             }
         }
-        stage('Deploy') {
+        stage("Publish Images") {
             steps {
-                echo 'Deploying to Azure'
+                echo "Pushing to ACR..."
+            }
+        }
+        stage("Deploy") {
+            steps {
+                echo "Deploying to Azure"
             }
         }
     }
