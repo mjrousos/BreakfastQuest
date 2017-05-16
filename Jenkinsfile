@@ -36,8 +36,16 @@ pipeline {
             }
         }
         stage("Publish Images") {
+            environment {
+                BQ_TAG = readFile("$WORKSPACE/generated/version.txt").trim()
+                BQ_INGRESS_PORT = "8080"
+            }
             steps {
-                echo "Pushing to ACR..."
+                withDockerRegistry([credentialsId: 'MJRContainers', url: 'http://mjrcontainers.azurecr.io']) {
+                    sh "docker-compose -f docker-compose.yml -f docker-compose.build.yml push"
+                    sh "docker rm -f \$(docker ps -a -q) || echo 'No docker images to remove'"
+                    sh "docker rmi -f \$(docker images -q) || echo 'Warning: Docker rmi failed - likely images were listed multiple times'"
+                }
             }
         }
         stage("Deploy") {

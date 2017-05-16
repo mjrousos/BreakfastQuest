@@ -3,14 +3,14 @@ version: '2'
 services:
 
   webclient:
-    image: "mjrousos/breakfastquest-webclient:${BQ_TAG}"
+    image: "mjrcontainers.azurecr.io/breakfastquest-webclient:${BQ_TAG}"
     environment:
       - Dummy=NoEnvVarsNeeded
     ports:
       - "5000"
 
   gateway:
-    image: "mjrousos/breakfastquest-gateway:${BQ_TAG}"
+    image: "mjrcontainers.azurecr.io/breakfastquest-gateway:${BQ_TAG}"
     depends_on:
       - webclient
     ports:
