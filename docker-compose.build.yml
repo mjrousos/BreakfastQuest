@@ -1,0 +1,13 @@
+version: '2'
+
+services:
+
+  webclient:
+    build:
+      context: ./WebClient
+      dockerfile: Dockerfile
+
+  gateway:
+    build:
+      context: ./BreakfastQuestGateway
+      dockerfile: Dockerfile

@@ -2,34 +2,55 @@ pipeline {
     agent any
 
     triggers {
-        pollSCM 'H/2 * * * *'
+        pollSCM "H/2 * * * *"
     }
 
     tools {
-        node 'NodeJS-7.10'
-        docker 'Docker'
-        ansible 'Ansible 2.0.0.2'
+        nodejs "NodeJS-7.10"
     }
 
     stages {
-        stage('Stamp Version') {
+        stage("Stamp Version") {
             steps {
-                echo 'Getting version...'
+                sh "sudo chmod 777 $WORKSPACE/composeVersion.sh"
+                sh "$WORKSPACE/composeVersion.sh"
             }
         }
-        stage('Build') {
+        stage("Build") {
             steps {
-                echo 'Building...'
+                sh "cd $WORKSPACE/WebClient && npm install && npm run build"
             }
         }
-        stage('Publish Images') {
+        stage("Build Docker Images") {
+            environment {
+                BQ_TAG = readFile("$WORKSPACE/generated/version.txt").trim()
+                BQ_INGRESS_PORT = "8080"
+            }
             steps {
-                echo 'Pushing to ACR...'
+                sh "docker-compose -f docker-compose.yml -f docker-compose.build.yml build"
             }
         }
-        stage('Deploy') {
+        stage("Test") {
             steps {
-                echo 'Deploying to Azure'
+                echo "No tests yet"
+            }
+        }
+        stage("Publish Images") {
+            environment {
+                BQ_TAG = readFile("$WORKSPACE/generated/version.txt").trim()
+                BQ_INGRESS_PORT = "8080"
+            }
+            steps {
+                withDockerRegistry([credentialsId: 'MJRContainers', url: 'http://mjrcontainers.azurecr.io']) {
+                    sh "docker-compose -f docker-compose.yml -f docker-compose.build.yml push"
+                    sh "docker rm -f \$(docker ps -a -q) || echo 'No docker images to remove'"
+                    sh "docker rmi -f \$(docker images -q) || echo 'Warning: Docker rmi failed - likely images were listed multiple times'"
+                }
+            }
+        }
+        stage("Deploy") {
+            steps {
+                echo "Deploying to Azure"
             }
         }
     }

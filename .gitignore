@@ -240,3 +240,43 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# Generated Files
+generated/
+
+## Java
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+# Compiled class file
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Permit maven-wrapper.jar (jar files are usually ignored)
+!.mvn/wrapper/maven-wrapper.jar
