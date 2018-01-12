@@ -1,19 +1,26 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Debug (Launch)-PuzzleServiceConsoleApplication",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/puzzle-service-console",
-            "console": "internalConsole",
-            "stopOnEntry": false,
-            "mainClass": "com.mjrousos.breakfastquest.puzzleservice.console.PuzzleServiceConsoleApplication",
-            "args": "",
-            "projectName": "puzzle-service-console"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "PuzzleService Console (Attach)",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 8000
+    },
+    {
+      "type": "java",
+      "name": "PuzzleService Console (Launch)",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/puzzle-service-console",
+      "console": "integratedTerminal",
+      "stopOnEntry": false,
+      "mainClass": "com.mjrousos.breakfastquest.puzzleservice.console.PuzzleServiceConsoleApplication",
+      "args": "",
+      "projectName": "puzzle-service-console"
+    }
+  ]
 }
