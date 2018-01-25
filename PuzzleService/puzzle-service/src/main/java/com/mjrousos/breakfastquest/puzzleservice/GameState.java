@@ -19,10 +19,10 @@ public class GameState {
 	private int[] inventory;
 	private boolean creatorMode;
 	private Deque<Integer> callstack;
-	
+
 	public GameState() {
 		// Initialize call stack
-		setCallstack(new ArrayDeque<Integer>());		
+		setCallstack(new ArrayDeque<Integer>());
 	}
 
     public GameState(Puzzle puzzle) {
@@ -34,12 +34,12 @@ public class GameState {
     	setOrientation(puzzle.getStartingOrientation());
     	setInventory(puzzle.getStartingInventory().clone());
     }
-    
-	public Boolean Step() throws InvalidInstructionException {
+
+	public Boolean step() throws InvalidInstructionException {
 		if (instructionPointer >= instructions.length) {
 			return false;
 		}
-		
+
 		switch (instructions[instructionPointer].getType()) {
 			case Noop:
 				instructionPointer++;
@@ -59,7 +59,7 @@ public class GameState {
 			case Down:
 				move(0, 1);
 				instructionPointer++;
-				break;	
+				break;
 			case TurnRight:
 				setOrientation((byte) ((getOrientation() + 1) % 4));
 				instructionPointer++;
@@ -87,13 +87,13 @@ public class GameState {
 			case Pickup:
 				// Get the current tile info
 				short tile = getTile(getPositionX(), getPositionY());
-				
+
 				// Check the item type and, if not empty, add to inventory
 				Items itemType = Items.getItemType(tile);
 				if (itemType != Items.None) {
 					getInventory()[itemType.ordinal()]++;
 				}
-				
+
 				// Update the current tile to have no item
 				setTile(getPositionX(), getPositionY(), Items.removeItem(tile));
 				instructionPointer++;
@@ -103,11 +103,16 @@ public class GameState {
 				Items itemToDrop = Items.values()[instructions[instructionPointer].getTarget()];
 				tile = getTile(getPositionX(), getPositionY());
 				if (itemToDrop != Items.None && Items.getItemType(tile) == Items.None) {
-					// Remove item from inventory
-					getInventory()[itemToDrop.ordinal()]--;
-					
-					// Place on tile
-					setTile(getPositionX(), getPositionY(), Items.placeItem(tile, itemToDrop));
+                    // Check that the player either has the proper item in inventory or is in creator mode
+                    if (getInventory()[itemToDrop.ordinal()] > 0 || isCreatorMode()) {
+                        if (!isCreatorMode()) {
+                            // Remove item from inventory
+                            getInventory()[itemToDrop.ordinal()]--;
+                        }
+
+                        // Place on tile
+                        setTile(getPositionX(), getPositionY(), Items.placeItem(tile, itemToDrop));
+                    }
 				}
 				instructionPointer++;
 				break;
@@ -120,25 +125,33 @@ public class GameState {
 				setTile(getPositionX(), getPositionY(), Tiles.setTileType(tile, newTileType));
 				instructionPointer++;
 				break;
-								
+
 			// TODO : Branch*, call, return
-				
-			default: 
+
+			default:
 				throw new InvalidInstructionException("Unknown instruction: " + instructions[instructionPointer].toString());
 		}
-		
+
 		return instructionPointer < instructions.length;
 	}
-		
+
 	private boolean move(int shiftX, int shiftY) {
 		int destX = positionX + shiftX;
 		int destY = positionY + shiftY;
-		
-		if (destX < 0 || destX >= getWidth() || destY < 0 || destY >= getHeight()) 
+
+        // Don't move off the edge of the board
+		if (destX < 0 || destX >= getWidth() || destY < 0 || destY >= getHeight())
 		{
-			// Don't move off the edge of the board
-			return false; 
-		}
+			return false;
+        }
+
+        // Allow movement on all terrain in creator mode
+        if (isCreatorMode()) {
+            positionX = destX;
+            positionY = destY;
+            return true;
+        }
+
 		Tiles tileType = Tiles.getTileType(getTile(destX, destY));
 
 		switch(tileType) {
@@ -162,19 +175,19 @@ public class GameState {
 			default:
 				// No-op for inaccessible tile types
 				return false;
-				
-		}	
+
+		}
 	}
-	
+
 	private boolean moveLog(int logX, int logY, int shiftX, int shiftY) {
 		int destX = logX + shiftX;
 		int destY = logY + shiftY;
-		
+
 		// Check that the log is not being pushed out-of-bounds
 		if (destX < 0 || destY < 0 || destX >= getWidth() || destY >= getHeight()) {
 			return false;
 		}
-		
+
 		Tiles destTile = Tiles.getTileType(getTile(destX, destY));
 		switch (destTile) {
 			case Grass:
@@ -206,7 +219,7 @@ public class GameState {
 		if (shifts.length < 2) {
 			throw new IllegalArgumentException("Shifts array must contain at least two elements");
 		}
-		
+
 		switch (getOrientation()) {
 		case 0:
 			shifts[0] = 1;
@@ -233,7 +246,7 @@ public class GameState {
     	if (requirements == null) {
     		return false;
     	}
-    	
+
     	// Check inventory
     	int[] inventory = getInventory();
     	for (int i = 0; i < Items.values().length; i++) {
@@ -242,7 +255,7 @@ public class GameState {
     			return false;
     		}
     	}
-    		
+
     	// Check board state
     	short[][] requiredBoardState = requirements.getBoardState();
     	if (requiredBoardState != null) {
@@ -250,8 +263,8 @@ public class GameState {
     			for (int j = 0; j < requiredBoardState.length; j++) { // For each tile in row
     				Tiles requiredTileType = Tiles.getTileType(requiredBoardState[i][j]);
     				Items requiredItemType = Items.getItemType(requiredBoardState[i][j]);
-    				
-    				// Only check if required state includes a non-none entry so that the 
+
+    				// Only check if required state includes a non-none entry so that the
     				// required board state can be sparsely populated with just the bits that
     				// the solution cares about.
     				if (requiredTileType != Tiles.None) {
@@ -269,32 +282,32 @@ public class GameState {
     			}
     		}
     	}
-    	
+
     	return true;
     }
 
 	public int getHeight() {
 		return boardState.length;
 	}
-	
+
 	public int getWidth() {
 		if (boardState.length < 1) {
 			return 0;
 		}
-		
+
 		return boardState[0].length;
 	}
-		
+
 	public short getTile(int x, int y) {
 		// TODO : Check bounds
 		return boardState[y][x];
 	}
-	
+
 	public void setTile(int x, int y, short tile) {
 		// TODO : Check bounds
 		boardState[y][x] = tile;
 	}
-	
+
 	public Instruction[] getInstructions() {
 		return instructions;
 	}
