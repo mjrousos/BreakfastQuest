@@ -8,38 +8,49 @@ public class Puzzle {
     private boolean published;
     private int version;
     private String author;
-    
+
     private short[][] boardState;
 	private SolutionRequirements solution;
     private int targetInstructionCount;
     private int maxInstructionCount;
     private InstructionTypes[] availableInstructions;
     private int[] startingInventory;
-    
+
 	private int startingPositionX;
-    private int startingPositionY;   
-    
+    private int startingPositionY;
+
     // 0 - 3: Right, Down, Left, Up
     private byte startingOrientation;
-    
+
     public Puzzle(int width, int height, int maxInstructions) {
-    	// Create empty board and instruction array
-    	setBoardState(new short[height][width]);
-    	setMaxInstructionCount(maxInstructionCount);
-    	
+        // Create empty board
+        short[][] emptyBoard = new short[height][width];
+
+        // Initialize it to all grass
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                emptyBoard[i][j] = Tiles.setTileType((short)0, Tiles.Grass);
+            }
+        }
+
+        setBoardState(emptyBoard);
+
+        // Create empty instruction array
+    	setMaxInstructionCount(maxInstructions);
+
     	// Default solution requirements (1 breakfast)
     	setSolution(new SolutionRequirements());
-    	
+
     	// Default to standard instruction set
     	setAvailableInstructions(InstructionTypes.getStandardInstructionTypes());
-    	
+
     	// Empty inventory
     	setStartingInventory(new int[Items.values().length]);
-    	 
+
     	// Set version
     	setVersion(1);
     }
-    
+
     // Annoyance: This would be so much more succinct with properties
     public int getId() {
 		return id;
@@ -136,7 +147,7 @@ public class Puzzle {
 	public void setMaxInstructionCount(int maxInstructionCount) {
 		this.maxInstructionCount = maxInstructionCount;
 	}
-	
+
     public int[] getStartingInventory() {
 		return startingInventory;
 	}
