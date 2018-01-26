@@ -23,13 +23,17 @@ public class Puzzle {
     private byte startingOrientation;
 
     public Puzzle(int width, int height, int maxInstructions) {
+        this(width, height, maxInstructions, Tiles.Grass);
+    }
+
+    public Puzzle(int width, int height, int maxInstructions, Tiles defaultTile) {
         // Create empty board
         short[][] emptyBoard = new short[height][width];
 
         // Initialize it to all grass
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                emptyBoard[i][j] = Tiles.setTileType((short)0, Tiles.Grass);
+                emptyBoard[i][j] = Tiles.setTileType((short)0, defaultTile);
             }
         }
 
