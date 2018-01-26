@@ -258,30 +258,9 @@ public class GameState {
 
     	// Check board state
     	short[][] requiredBoardState = requirements.getBoardState();
-    	if (requiredBoardState != null) {
-    		for (int i = 0; i < requiredBoardState.length; i++) { // For each row in required board state
-    			for (int j = 0; j < requiredBoardState.length; j++) { // For each tile in row
-    				Tiles requiredTileType = Tiles.getTileType(requiredBoardState[i][j]);
-    				Items requiredItemType = Items.getItemType(requiredBoardState[i][j]);
-
-    				// Only check if required state includes a non-none entry so that the
-    				// required board state can be sparsely populated with just the bits that
-    				// the solution cares about.
-    				if (requiredTileType != Tiles.None) {
-    					Tiles tileType = Tiles.getTileType(getTile(j, i));
-    					if (requiredTileType != tileType) {
-    						return false;
-    					}
-    				}
-    				if (requiredItemType != Items.None) {
-    					Items itemType = Items.getItemType(getTile(j, i));
-    					if (requiredItemType != itemType) {
-    						return false;
-    					}
-    				}
-    			}
-    		}
-    	}
+        if (!PuzzleUtilities.boardStateSatisfiesSolution(getBoardState(), requiredBoardState)) {
+            return false;
+        }
 
     	return true;
     }
