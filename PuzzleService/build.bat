@@ -7,3 +7,7 @@ popd
 pushd %~dp0puzzle-service-console
 call %M2_HOME%\bin\mvn.cmd clean package
 popd
+
+@REM Build puzzle-service-api
+pushd %~dp0puzzle-service-api
+call %M2_HOME%\bin\mvn.cmd clean package

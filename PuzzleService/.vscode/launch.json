@@ -6,7 +6,7 @@
   "configurations": [
     {
       "type": "java",
-      "name": "PuzzleService Console (Attach)",
+      "name": "PuzzleService (Attach)",
       "request": "attach",
       "hostName": "localhost",
       "port": 8000
