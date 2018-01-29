@@ -1,5 +1,7 @@
 package com.mjrousos.breakfastquest.puzzleservice.models;
 
+import java.time.OffsetDateTime;
+
 public class Puzzle {
     private int id;
     private String description;
@@ -8,6 +10,7 @@ public class Puzzle {
     private boolean published;
     private int version;
     private String author;
+    private OffsetDateTime lastUpdated;
 
     private short[][] boardState;
 	private SolutionRequirements solution;
@@ -182,5 +185,19 @@ public class Puzzle {
 
 	public void setStartingOrientation(byte startingOrientation) {
 		this.startingOrientation = startingOrientation;
+	}
+
+	/**
+	 * @return the lastUpdated
+	 */
+	public OffsetDateTime getLastUpdated() {
+		return lastUpdated;
+	}
+
+	/**
+	 * @param lastUpdated the lastUpdated to set
+	 */
+	public void setLastUpdated(OffsetDateTime lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 }
