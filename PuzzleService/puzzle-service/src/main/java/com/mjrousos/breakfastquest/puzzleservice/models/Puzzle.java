@@ -6,7 +6,7 @@ public class Puzzle {
     private int id;
     private String description;
     private String title;
-    private byte dificulty;
+    private byte difficulty;
     private boolean published;
     private int version;
     private String author;
@@ -83,12 +83,12 @@ public class Puzzle {
 		this.title = title;
 	}
 
-	public byte getDificulty() {
-		return dificulty;
+	public byte getDifficulty() {
+		return difficulty;
 	}
 
-	public void setDificulty(byte dificulty) {
-		this.dificulty = dificulty;
+	public void setDifficulty(byte dificulty) {
+		this.difficulty = dificulty;
 	}
 
 	public boolean getPublished() {
