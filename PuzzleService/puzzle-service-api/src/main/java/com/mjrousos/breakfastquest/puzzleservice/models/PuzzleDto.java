@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.temporal.TemporalAccessor;
 
 import com.mjrousos.breakfastquest.puzzleservice.PuzzleUtilities;
 
@@ -48,7 +47,11 @@ public class PuzzleDto {
         ret.setLastUpdated(OffsetDateTime.ofInstant(Instant.ofEpochMilli(lastUpdated.getMillis()), ZoneId.of(lastUpdated.getZone().getID())));
         ret.setPublished(published);
         ret.setSolution(solution.toSolutionRequirements());
-        ret.setStartingInventory(startingInventory);
+        for (int i = 0; i < startingInventory.length; i++) {
+            // Don't copy starting inventory directly so that puzzle authors can just omit
+            // inventory counts in puzzle definitions and have them be interpreted as 0s
+            ret.getStartingInventory()[i] = startingInventory[i];
+        }
         ret.setStartingOrientation(startingOrientation);
         ret.setStartingPositionX(startingPositionX);
         ret.setStartingPositionY(startingPositionY);

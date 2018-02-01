@@ -5,7 +5,7 @@ import com.mjrousos.breakfastquest.puzzleservice.models.Tiles;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 
-// Annoyance; No static classes? I guess that's fine...
+// Annoyance: No static classes? I guess that's fine...
 public /*static*/ class PuzzleUtilities {
 	public static final String boardStateToString(short[][] boardState) {
 		return Base64.getEncoder().encodeToString(PuzzleUtilities.boardStateToBytes(boardState));

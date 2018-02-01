@@ -22,8 +22,17 @@ public class SolutionRequirementsDto {
         // Annoyance: In case I haven't mentioned it recently, I miss var.
         SolutionRequirements ret = new SolutionRequirements();
         ret.setBoardState(PuzzleUtilities.boardStateFromString(this.boardStateString));
-        ret.setMaxInventoryCounts(this.maxInventoryCounts);
-        ret.setMinInventoryCounts(this.minInventoryCounts);
+
+        // Don't copy min/max inventory directly. This way, puzzle authors can
+        // omit trailing zeros in their min/max inventory arrays.
+        // ret.setMaxInventoryCounts(this.maxInventoryCounts);
+        // ret.setMinInventoryCounts(this.minInventoryCounts);
+        for (int i = 0; i < minInventoryCounts.length; i++) {
+            ret.getMinInventoryCounts()[i] = minInventoryCounts[i];
+        }
+        for (int i = 0; i < maxInventoryCounts.length; i++) {
+            ret.getMaxInventoryCounts()[i] = maxInventoryCounts[i];
+        }
 
         return ret;
     }
