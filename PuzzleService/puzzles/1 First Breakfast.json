@@ -1,0 +1,31 @@
+{
+  "id": 1,
+  "title": "First Breakfast",
+  "description": "Help your animal avoid the rocks and pick up its breakfast!",
+  "author": "MJR",
+  "version": 1,
+  "difficulty": 1,
+  "published": true,
+
+  "boardStateString": "AAAABgAAAAYAAQABAAEAAQABAAEAAQABAAMAAwADAAEAAQABAAMAAwABAQEAAQABAAMAAwABAAEAAQABAAMAAQABAAEAAQABAAEAAQABAAE=",
+  "maxInstructionCount": 15,
+  "startingOrientation": 0,
+  "startingPositionX": 0,
+  "startingPositionY": 0,
+  "targetInstructionCount": 7,
+  "startingInventory": [ ],
+
+  "availableInstructions": [
+    "Up",
+    "Down",
+    "Right",
+    "Left",
+    "Pickup"
+  ],
+
+  "solution": {
+    "boardStateString": "AAAABgAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+    "minInventoryCounts": [ 0, 1 ],
+    "maxInventoryCounts": [ ]
+  }
+}
