@@ -10,17 +10,6 @@
       "request": "attach",
       "hostName": "localhost",
       "port": 8000
-    },
-    {
-      "type": "java",
-      "name": "PuzzleService Console (Launch)",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/puzzle-service-console",
-      "console": "integratedTerminal",
-      "stopOnEntry": false,
-      "mainClass": "com.mjrousos.breakfastquest.puzzleservice.console.PuzzleServiceConsoleApplication",
-      "args": "",
-      "projectName": "puzzle-service-console"
     }
   ]
 }
