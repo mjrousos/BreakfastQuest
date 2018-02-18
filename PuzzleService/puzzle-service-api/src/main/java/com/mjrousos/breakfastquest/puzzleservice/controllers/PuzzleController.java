@@ -1,10 +1,11 @@
 package com.mjrousos.breakfastquest.puzzleservice.controllers;
 
-import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,8 +31,13 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/puzzles")
 public class PuzzleController {
 
+    private final PuzzleRepository puzzles;
+    private static final Logger logger = LoggerFactory.getLogger(PuzzleController.class);
+
     @Autowired
-    private PuzzleRepository puzzles;
+    public PuzzleController(PuzzleRepository puzzles) {
+        this.puzzles = puzzles;
+    }
 
     // Annoyance: CompletableFutures are an ok way of making this async,
     // but much harder to use than async/await for cases involving multiple
@@ -70,6 +76,7 @@ public class PuzzleController {
 
             return CompletableFuture.supplyAsync(() -> {
                 PuzzleDto result = puzzles.save(newPuzzle);
+                logger.info("Created new puzzle {} \"{}\": {}", result.id, result.title, result.boardStateString);
                 return ResponseEntity.created(resultLocationBuilder.buildAndExpand(result.id).toUri()).build();
             });
         } else  {
@@ -88,6 +95,7 @@ public class PuzzleController {
         updatedPuzzleDto.id = puzzle.id;
         updatedPuzzleDto.lastUpdated = DateTime.now();
         return CompletableFuture.supplyAsync(() -> {
+            logger.info("Updated puzzle {}: {}", updatedPuzzleDto.id, updatedPuzzleDto.boardStateString);
             return ResponseEntity.ok(puzzles.save(updatedPuzzleDto));
         });
     }
