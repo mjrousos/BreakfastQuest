@@ -25,7 +25,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class PuzzleServiceApiApplication {
 
-    @Value("${appName}")
+    @Value("${breakfastQuest.appName}")
     private String appName;
 
 	public static void main(String[] args) {
