@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +18,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.mjrousos.breakfastquest.puzzleservice.GameState;
+import com.mjrousos.breakfastquest.puzzleservice.InvalidInstructionException;
+import com.mjrousos.breakfastquest.puzzleservice.InvalidInstructionsException;
 import com.mjrousos.breakfastquest.puzzleservice.PuzzleNotFoundException;
+import com.mjrousos.breakfastquest.puzzleservice.models.Instruction;
+import com.mjrousos.breakfastquest.puzzleservice.models.InstructionTypes;
 import com.mjrousos.breakfastquest.puzzleservice.models.PuzzleDto;
+import com.mjrousos.breakfastquest.puzzleservice.models.SolutionRequirements;
+import com.mjrousos.breakfastquest.puzzleservice.models.SolutionResponseDTO;
 import com.mjrousos.breakfastquest.puzzleservice.repositories.PuzzleRepository;
 
 import io.swagger.annotations.Api;
@@ -30,6 +38,12 @@ import io.swagger.annotations.ApiOperation;
 @Controller
 @RequestMapping("/puzzles")
 public class PuzzleController {
+
+    @Value("${breakfastQuest.maxSteps}")
+    private int maxSteps;
+
+    @Value("${breakfastQuest.twoStarAllowance}")
+    private double twoStarAllowance;
 
     private final PuzzleRepository puzzles;
     private static final Logger logger = LoggerFactory.getLogger(PuzzleController.class);
@@ -103,16 +117,105 @@ public class PuzzleController {
     @ApiOperation("Delete a puzzle by ID")
     @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
     public Future<ResponseEntity<Void>> deletePuzzle(@PathVariable(name = "id", required = true) int id) {
-        PuzzleDto puzzle = puzzles.findOne(id);
-        if (puzzle == null) {
-            return CompletableFuture.completedFuture(ResponseEntity.notFound().build());
-        }
+        CompletableFuture<PuzzleDto> puzzleFuture = CompletableFuture.supplyAsync(() -> {
+            return puzzles.findOne(id);
+        });
 
-        return CompletableFuture.supplyAsync(() -> {
+        return puzzleFuture.thenApplyAsync(puzzle -> {
+            if (puzzle == null) {
+                return ResponseEntity.notFound().build();
+            }
+
             puzzles.delete(puzzle);
             return ResponseEntity.ok().build();
         });
     }
 
-    // TODO : Add solve API
+    @ApiOperation("Solve a puzzle")
+    @RequestMapping(value="/solve/{id}", method=RequestMethod.PUT)
+    public Future<ResponseEntity<SolutionResponseDTO>> solvePuzzle(@PathVariable(name = "id", required = true) int id, @RequestBody Instruction[] instructions) {
+        if (instructions == null) {
+            throw new InvalidInstructionsException();
+        }
+
+        Instruction[] preparedInstructions = trimTrailingNoOps(instructions);
+
+        // Lookup puzzle
+        CompletableFuture<PuzzleDto> puzzleFuture = CompletableFuture.supplyAsync(() -> {
+            return puzzles.findOne(id);
+        });
+
+        // Apply instructions
+        return puzzleFuture.thenApplyAsync(puzzleDto -> {
+            if (puzzleDto == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Check target instruction length
+            if (preparedInstructions.length > puzzleDto.maxInstructionCount) {
+                throw new InvalidInstructionsException();
+            }
+
+            // Load game state and get solution requirements
+            GameState gameState = new GameState(puzzleDto.toPuzzle());
+            gameState.setInstructions(preparedInstructions);
+            SolutionRequirements solutionRequirements = puzzleDto.solution.toSolutionRequirements();
+            SolutionResponseDTO response = new SolutionResponseDTO();
+
+            // Step until solved or out of steps/instructions
+            int steps = 0;
+            try {
+                do {
+                    if (gameState.isSolved(solutionRequirements)) {
+                        reportSolved(puzzleDto, preparedInstructions.length, steps, response);
+                        break;
+                    }
+                } while (steps++ < maxSteps && gameState.step());
+
+                // Final check in case the puzzle was solved with the last step
+                if (gameState.isSolved(solutionRequirements)) {
+                    reportSolved(puzzleDto, preparedInstructions.length, steps, response);
+                }
+			} catch (InvalidInstructionException e) {
+				throw new InvalidInstructionsException();
+			}
+
+            if (response.score == 0) {
+                logger.info("Puzzle {} not solved with {} instructions and {} steps earning {} stars", puzzleDto.id, preparedInstructions.length, steps, response.score);
+            }
+
+            return ResponseEntity.ok(response);
+        });
+    }
+
+    // Annoyance : Can't fairly call this an annoyance since C# only just got this feature, but a nested method would be nice here.
+	private void reportSolved(PuzzleDto puzzleDto, int instructionsCount, int steps,SolutionResponseDTO response) {
+		response.score = getScoreFromInstructionCount(puzzleDto.targetInstructionCount, instructionsCount);
+        logger.info("Puzzle {} solved with {} instructions and {} steps earning {} stars", puzzleDto.id, instructionsCount, steps, response.score);
+	}
+
+    // Trim trailing no-ops from solution instructions
+	private Instruction[] trimTrailingNoOps(Instruction[] instructions) {
+        int endIndex = instructions.length - 1;
+        while (endIndex >= 0 && instructions[endIndex].getType() == InstructionTypes.Noop) {
+            endIndex--;
+        }
+
+		Instruction[] preparedInstructions = new Instruction[endIndex + 1];
+        for (int i = 0; i < endIndex + 1; i++) {
+            preparedInstructions[i] = instructions[i];
+        }
+
+        return preparedInstructions;
+	}
+
+	private int getScoreFromInstructionCount(int targetInstructionCount, int instructionCount) {
+		if (instructionCount <= targetInstructionCount) {
+            return 3;
+        } else if (instructionCount <= targetInstructionCount * (1 + twoStarAllowance)) {
+            return 2;
+        } else {
+            return 1;
+        }
+	}
 }
