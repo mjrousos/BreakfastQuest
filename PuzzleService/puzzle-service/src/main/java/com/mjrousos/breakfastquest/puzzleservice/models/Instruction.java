@@ -2,7 +2,15 @@ package com.mjrousos.breakfastquest.puzzleservice.models;
 
 public class Instruction {
 	private InstructionTypes type;
-	private Short target;
+    private Short target;
+
+    public Instruction() {
+        this(InstructionTypes.Noop, 0);
+    }
+
+    public Instruction(short type, short target) {
+        this(InstructionTypes.valueOf(type), target);
+    }
 
     public Instruction(InstructionTypes type) {
         this(type, 0);
