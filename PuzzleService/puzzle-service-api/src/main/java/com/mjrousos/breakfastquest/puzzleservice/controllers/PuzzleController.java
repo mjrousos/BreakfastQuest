@@ -20,8 +20,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.mjrousos.breakfastquest.puzzleservice.GameState;
 import com.mjrousos.breakfastquest.puzzleservice.InvalidInstructionException;
-import com.mjrousos.breakfastquest.puzzleservice.InvalidInstructionsException;
-import com.mjrousos.breakfastquest.puzzleservice.PuzzleNotFoundException;
+import com.mjrousos.breakfastquest.puzzleservice.exceptions.InvalidInstructionsException;
+import com.mjrousos.breakfastquest.puzzleservice.exceptions.PuzzleNotFoundException;
 import com.mjrousos.breakfastquest.puzzleservice.models.Instruction;
 import com.mjrousos.breakfastquest.puzzleservice.models.InstructionTypes;
 import com.mjrousos.breakfastquest.puzzleservice.models.PuzzleDto;

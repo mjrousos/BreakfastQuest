@@ -1,4 +1,4 @@
-package com.mjrousos.breakfastquest.puzzleservice;
+package com.mjrousos.breakfastquest.puzzleservice.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
